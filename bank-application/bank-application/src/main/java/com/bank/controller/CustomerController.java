@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bank.entity.Customer;
+import com.bank.dto.CustomerRequest;
+import com.bank.dto.CustomerResponse;
 import com.bank.service.CustomerService;
 
 @RestController
@@ -21,11 +22,11 @@ public class CustomerController {
 	// https://localhost:9090/customer/save
 	// To Save customer records - 201 CREATED
 	@PostMapping("/save")
-	public ResponseEntity<String> createCustomer(@RequestBody Customer customer) {
-		String response = customerService.createCustomer(customer);
+	public ResponseEntity<CustomerResponse> createCustomer(@RequestBody CustomerRequest customerRequest) {
+		CustomerResponse response = customerService.createCustomer(customerRequest);
 		if (response != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		}
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create customer");
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new CustomerResponse().builder().accountId(null).customerId(null).message("Failed to create customer").build());
 	}
 }

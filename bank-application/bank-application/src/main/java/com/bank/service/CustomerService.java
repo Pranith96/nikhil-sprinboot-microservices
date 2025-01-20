@@ -1,9 +1,10 @@
 package com.bank.service;
 
-import com.bank.entity.Customer;
+import com.bank.dto.CustomerRequest;
+import com.bank.dto.CustomerResponse;
 
 public interface CustomerService {
 
-	String createCustomer(Customer customer);
+	CustomerResponse createCustomer(CustomerRequest customer);
 
 }
