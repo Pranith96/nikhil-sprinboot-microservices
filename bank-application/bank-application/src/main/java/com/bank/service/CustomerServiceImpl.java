@@ -1,5 +1,7 @@
 package com.bank.service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
 		if (customerResponse == null || accountResponse == null) {
 			return null;
 		}
-		
+
 		CustomerResponse response = new CustomerResponse();
 		response.setAccountId(accountResponse.getAccountNumber());
 		response.setCustomerId(customerResponse.getCustomerId());
@@ -76,5 +78,32 @@ public class CustomerServiceImpl implements CustomerService {
 		Random random = new Random();
 		long accountNum = random.nextLong(5555, 99999);
 		return accountNum;
+	}
+
+	@Override
+	public List<Account> getAccountsForCustomer(long customerId) {
+		List<Account> response = accountRepository.findByCustomerId(customerId);
+		if (response == null) {
+			throw new RuntimeException("Data is not found for customerId");
+		}
+		return response;
+	}
+
+	@Override
+	public Customer getCustomerInfo(long customerId) {
+		Optional<Customer> response = customerRepository.findByCustomerId(customerId);
+		if (!response.isPresent()) {
+			throw new RuntimeException("Data is not found for customerId");
+		}
+		return response.get();
+	}
+
+	@Override
+	public List<Customer> getAllCustomerInfo() {
+		List<Customer> response = customerRepository.findAll();
+		if (response == null) {
+			throw new RuntimeException("Data is empty");
+		}
+		return response;
 	}
 }
