@@ -11,4 +11,6 @@ import com.bank.entity.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
 	Optional<Customer> findByCustomerId(long customerId);
+
+	void deleteByCustomerId(long customerId);
 }
