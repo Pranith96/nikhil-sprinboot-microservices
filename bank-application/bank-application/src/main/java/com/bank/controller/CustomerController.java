@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,13 +35,14 @@ public class CustomerController {
 		if (response != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 		}
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CustomerResponse.builder()
-				.accountId(null).customerId(null).message("Failed to create customer").build());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(CustomerResponse.builder().accountId(null)
+				.customerId(null).message("Failed to create customer").build());
 	}
 
 	@GetMapping("/accounts")
-	public ResponseEntity<List<Account>> getAccountsForCustomer(@RequestParam("custId") long customerId) {
-		List<Account> response = customerService.getAccountsForCustomer(customerId);
+	public ResponseEntity<List<Account>> getAccountsForCustomer(@RequestParam("custId") long customerId,
+			@RequestParam(value = "isActiveTag", required = false) String isActiveTag) {
+		List<Account> response = customerService.getAccountsForCustomer(customerId, isActiveTag);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
@@ -52,6 +55,12 @@ public class CustomerController {
 	@GetMapping("/all")
 	public ResponseEntity<List<Customer>> getAllCustomerInfo() {
 		List<Customer> response = customerService.getAllCustomerInfo();
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@DeleteMapping("/{custId}")
+	public ResponseEntity<String> deletCustomerInfo(@PathVariable("custId") long customerId) {
+		String response = customerService.deletCustomerInfo(customerId);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }

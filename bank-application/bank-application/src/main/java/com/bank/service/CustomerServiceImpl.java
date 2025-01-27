@@ -3,6 +3,7 @@ package com.bank.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import com.bank.entity.Account;
 import com.bank.entity.Customer;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.CustomerRepository;
+
+import io.micrometer.common.util.StringUtils;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -81,10 +84,14 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public List<Account> getAccountsForCustomer(long customerId) {
+	public List<Account> getAccountsForCustomer(long customerId, String isActiveTag) {
 		List<Account> response = accountRepository.findByCustomerId(customerId);
 		if (response == null) {
 			throw new RuntimeException("Data is not found for customerId");
+		}
+
+		if (StringUtils.isNotBlank(isActiveTag) && "Y".equals(isActiveTag)) {
+			return response.stream().filter(x -> x.getAccountStatus().equals("ACTIVE")).collect(Collectors.toList());
 		}
 		return response;
 	}
@@ -105,5 +112,13 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new RuntimeException("Data is empty");
 		}
 		return response;
+	}
+
+	@Transactional
+	@Override
+	public String deletCustomerInfo(long customerId) {
+		customerRepository.deleteByCustomerId(customerId);
+		accountRepository.deleteByCustomerId(customerId);
+		return "Deleted successfully";
 	}
 }

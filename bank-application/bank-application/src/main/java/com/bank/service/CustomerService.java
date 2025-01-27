@@ -11,10 +11,12 @@ public interface CustomerService {
 
 	CustomerResponse createCustomer(CustomerRequest customer);
 
-	List<Account> getAccountsForCustomer(long customerId);
+	List<Account> getAccountsForCustomer(long customerId, String isActiveTag);
 
 	Customer getCustomerInfo(long customerId);
 
 	List<Customer> getAllCustomerInfo();
+
+	String deletCustomerInfo(long customerId);
 
 }
